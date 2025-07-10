@@ -1,16 +1,19 @@
 # ⏳ console-animation
 
-![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![PyPI version](https://img.shields.io/pypi/v/console_animation.svg)](https://pypi.org/project/console_animation/)
+[![Build](https://github.com/KoushikEng/console_animation/actions/workflows/python-package.yml/badge.svg)](https://github.com/KoushikEng/console_animation/actions)
+[![GitHub issues](https://img.shields.io/github/issues/KoushikEng/console_animation.svg)](https://github.com/KoushikEng/console_animation/issues)
+[![License](https://img.shields.io/github/license/KoushikEng/console_animation.svg)](https://github.com/KoushikEng/console_animation/blob/main/LICENSE)
 
-A lightweight and flexible Python decorator to show a console spinner (loading animation) while a function is running. Useful for long-running CLI tasks, data processing, I/O, or just making your tools feel more alive.
+A lightweight and flexible Python decorator to show a console animation (loading animation) while a function is running. Useful for long-running CLI tasks, data processing, I/O, or just making your tools feel more alive.
 
 ---
 
 ## 🔧 Features
 
-- Add a console spinner with a single line
+- Add a console animation with a single line
 - Optional start, end, and error messages
-- Customizable spinner style and speed
+- Customizable animation style and speed
 - Gracefully handles exceptions
 - Works with or without decorator arguments
 - Clean terminal output (hides cursor during spin)
@@ -26,8 +29,8 @@ pip install console_animation
 # or
 
 # Clone the repo
-git clone https://github.com/KoushikEng/console-animation.git
-cd console-animation
+git clone https://github.com/KoushikEng/console_animation.git
+cd console_animation
 
 # Install locally
 pip install .
@@ -43,7 +46,7 @@ pip install .
 
 ## 🚀 Usage
 
-### ✅ Basic Spinner (no args)
+### ✅ Basic animation (no args)
 
 ```python
 from console_animation import animate
@@ -54,7 +57,7 @@ def task():
     time.sleep(3)
 ```
 
-This will show a rotating spinner while `task()` runs.
+This will show a rotating animation while `task()` runs.
 
 ---
 
@@ -66,13 +69,13 @@ def do_work():
     time.sleep(5)
 ```
 
-* `start` – message shown before spinner
+* `start` – message shown before animation
 * `loaded` or `end` – message shown after successful run
 * `error` – message shown if exception occurs
 
 ---
 
-### 🎯 Custom Spinner and Speed
+### 🎯 Custom animation and Speed
 
 ```python
 @animate(spinner="⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓", interval=0.05)
@@ -89,7 +92,7 @@ def fancy_task():
 
 If `error` is not provided:
 
-* The spinner will stop
+* The animation will stop
 * Cursor will be restored
 * The original exception is raised **as-is**
 
@@ -143,7 +146,7 @@ Please feel free to:
 3. Commit your changes
 4. Push and open a PR
 
-> Issues and suggestions are also welcome in the [Issues](https://github.com/KoushikEng/console-animation/issues) tab.
+> Issues and suggestions are also welcome in the [Issues](https://github.com/KoushikEng/console_animation/issues) tab.
 
 ---
 
@@ -163,7 +166,7 @@ Built with frustration from boring terminal waits and love for clean CLI UX.
 
 * [ ] Async function support (`async def`)
 * [ ] Color support (via `colorama`)
-* [ ] Predefined spinner styles
+* [ ] Predefined animation styles
 * [ ] Timeout decorator option
 * [ ] PyPI upload
 
