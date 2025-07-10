@@ -4,16 +4,18 @@ import time
 import functools
 import itertools
 import traceback
+from typing import Optional
 
 def animate(
-    _func=None, *,
-    start: str | None =None,
-    end: str | None =None,
-    loaded: str | None =None,
-    error: str | None =None,
-    spinner="|/-\\",
-    interval=0.1,
-    hide_cursor=True
+    _func=None,
+    *,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    loaded: Optional[str] = None,
+    error: Optional[str] = None,
+    spinner: str = "|/-\\",
+    interval: float = 0.1,
+    hide_cursor: bool = True
 ):
     def decorator(func):
         @functools.wraps(func)
