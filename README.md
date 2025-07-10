@@ -46,9 +46,9 @@ pip install .
 ### ✅ Basic Spinner (no args)
 
 ```python
-from console_spinner import loading_animation
+from console_animation import animate
 
-@loading_animation
+@animate
 def task():
     import time
     time.sleep(3)
@@ -61,7 +61,7 @@ This will show a rotating spinner while `task()` runs.
 ### ⚙️ With Custom Messages
 
 ```python
-@loading_animation(start="Processing...", loaded="✅ Task complete!", error="❌ Something broke.")
+@animate(start="Processing...", loaded="✅ Task complete!", error="❌ Something broke.")
 def do_work():
     time.sleep(5)
 ```
@@ -75,7 +75,7 @@ def do_work():
 ### 🎯 Custom Spinner and Speed
 
 ```python
-@loading_animation(spinner="⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓", interval=0.05)
+@animate(spinner="⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓", interval=0.05)
 def fancy_task():
     time.sleep(3)
 ```
@@ -103,18 +103,18 @@ If `error` is set:
 ## 🧪 Example Script
 
 ```python
-from console_spinner import loading_animation
+from console_animation import animate
 import time
 
-@loading_animation(start="Crunching numbers...", loaded="✅ Done!", error="🔥 Failed.")
+@animate(start="Crunching numbers...", loaded="✅ Done!", error="🔥 Failed.")
 def math_task():
     time.sleep(3)
 
-@loading_animation
+@animate
 def quick_task():
     time.sleep(1)
 
-@loading_animation(start="Breaking...", error="Oops.")
+@animate(start="Breaking...", error="Oops.")
 def will_fail():
     raise RuntimeError("Intentional failure.")
 
