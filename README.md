@@ -168,7 +168,7 @@ Built with frustration from boring terminal waits and love for clean CLI UX.
 * [ ] Color support (via `colorama`)
 * [ ] Predefined animation styles
 * [ ] Timeout decorator option
-* [ ] PyPI upload
+* [x] PyPI upload
 
 ---
 
