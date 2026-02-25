@@ -5,7 +5,7 @@ this_dir = Path(__file__).parent
 long_description = (this_dir / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name='console-animation',
+    name='console_animation',
     version='0.2.3',
     description='An easy to use decorator to show a console spinner during function execution.',
     long_description=long_description,
