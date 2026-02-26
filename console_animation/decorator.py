@@ -113,7 +113,7 @@ def animate(
                     
                 return result
 
-            except Exception:
+            except BaseException:
 
                 stop_event.set()
                 t.join()
