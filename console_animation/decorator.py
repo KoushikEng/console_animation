@@ -4,37 +4,38 @@ import time
 import functools
 import itertools
 import traceback
+import logging
 from typing import Optional
 
 
 class SpinnerSafeStdout:
     """
-    A stdout proxy that safely pauses the spinner when writing to stdout.
+    A stdout proxy that safely pauses the spinner when writing to stdout or stderr.
     This is necessary because printing to stdout while the spinner is active causes 
     weird artifacts in the spinner animation.
     """
-    def __init__(self, real_stdout, clear_spinner, lock):
-        self.real_stdout = real_stdout
+    def __init__(self, real_stream, clear_spinner, lock, cursor_state):
+        self.real_stream = real_stream
         self.clear_spinner = clear_spinner
         self.lock = lock
-        self.cursor_at_start = True
+        self.cursor_state = cursor_state
 
     def write(self, text):
         if not text:
             return
         with self.lock:
-            if self.cursor_at_start:
+            if self.cursor_state[0]:
                 self.clear_spinner()
-            self.real_stdout.write(text)
-            self.real_stdout.flush()
+            self.real_stream.write(text)
+            self.real_stream.flush()
             
             if text.endswith('\n'):
-                self.cursor_at_start = True
+                self.cursor_state[0] = True
             else:
-                self.cursor_at_start = False
+                self.cursor_state[0] = False
 
     def flush(self):
-        self.real_stdout.flush()
+        self.real_stream.flush()
     
 
 def animate(
@@ -81,13 +82,41 @@ def animate(
                 sys.__stdout__.write(f"\r{clear_str}\r")
                 sys.__stdout__.flush()
 
+            cursor_state = [True]
+
             original_stdout = sys.stdout
-            sys.stdout = safe_stdout = SpinnerSafeStdout(original_stdout, clear_spinner, write_lock)
+            original_stderr = sys.stderr
+
+            safe_stdout = SpinnerSafeStdout(original_stdout, clear_spinner, write_lock, cursor_state)
+            safe_stderr = SpinnerSafeStdout(original_stderr, clear_spinner, write_lock, cursor_state)
+
+            sys.stdout = safe_stdout
+            sys.stderr = safe_stderr
+
+            original_emit = logging.StreamHandler.emit
+
+            def patched_emit(self, record):
+                swapped = False
+                orig_stream = getattr(self, 'stream', None)
+                if orig_stream is original_stdout:
+                    self.stream = safe_stdout
+                    swapped = True
+                elif orig_stream is original_stderr:
+                    self.stream = safe_stderr
+                    swapped = True
+                
+                try:
+                    original_emit(self, record)
+                finally:
+                    if swapped:
+                        self.stream = orig_stream
+
+            logging.StreamHandler.emit = patched_emit
 
             def spin():
                 while not stop_event.is_set():
                     with write_lock:
-                        if safe_stdout.cursor_at_start:
+                        if cursor_state[0]:
                             sys.__stdout__.write(f"\r{prefix}{next(spinner_cycle)}")
                             sys.__stdout__.flush()
                     time.sleep(interval)
@@ -107,13 +136,16 @@ def animate(
                 stop_event.set()
                 t.join()
 
-                sys.stdout = original_stdout
                 with write_lock:
-                    if safe_stdout.cursor_at_start:
+                    if cursor_state[0]:
                         clear_spinner()
                     else:
                         sys.__stdout__.write("\n")
                         sys.__stdout__.flush()
+
+                sys.stdout = original_stdout
+                sys.stderr = original_stderr
+                logging.StreamHandler.emit = original_emit
 
                 if done_text:
                     print(done_text)
@@ -129,14 +161,17 @@ def animate(
                 stop_event.set()
                 t.join()
                 
-                sys.stdout = original_stdout
                 with write_lock:
-                    if safe_stdout.cursor_at_start:
+                    if cursor_state[0]:
                         clear_spinner()
                     else:
                         sys.__stdout__.write("\n")
                         sys.__stdout__.flush()
                 
+                sys.stdout = original_stdout
+                sys.stderr = original_stderr
+                logging.StreamHandler.emit = original_emit
+
                 if hide:
                     sys.__stdout__.write("\033[?25h")
                     sys.__stdout__.flush()
@@ -146,6 +181,10 @@ def animate(
                     traceback.print_exc()
                 else:
                     raise
+            finally:
+                sys.stdout = original_stdout
+                sys.stderr = original_stderr
+                logging.StreamHandler.emit = original_emit
 
         return wrapper
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.7] - 2026-03-01
+
+### Fixed
+- Fixed a bug where concurrent `logging` module outputs and default `sys.stderr` printing would cause terminal visual artifacts or jam the loading animation spinner. 
+- Implemented temporary StreamHandler hook and shared cursor tracking across system out streams for graceful handling of long, asynchronous log outputs seamlessly against the spinning animation.
+
 ## [0.2.6] - 2026-02-28
 
 ### Fixed
